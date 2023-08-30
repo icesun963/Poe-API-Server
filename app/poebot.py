@@ -169,24 +169,25 @@ class PoeBot:
         return [button.text for button in suggestion_buttons]
     
     @handle_errors
-    def delete_latest_message(self):
-        bot_messages = self.driver.find_elements(By.XPATH, '//div[contains(@class, "Message_botMessageBubble__CPGMI")]')
-        latest_message = bot_messages[-1]
-        print("latest_message:")
-        print(latest_message)
-        #self.driver.execute_script('window.scrollBy(0,2000)')
+    def delete_latest_message(self, bot = True):
+        if (bot):
+            messages = self.driver.find_elements(By.XPATH, '//div[contains(@class, "Message_botMessageBubble__CPGMI")]')
+        else:
+            messages = self.driver.find_elements(By.XPATH, '//div[contains(@class, "Message_humanMessageBubble__Nld4j")]')
+        if (len(messages) == 0):
+            return
+        latest_message = messages[-1]
         self.driver.execute_script('arguments[0].scrollIntoView();',latest_message)
         time.sleep(2)
         ActionChains(self.driver).context_click(latest_message).perform()
-
-        delete_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(((By.XPATH, "//button[starts-with(@class, 'DropdownMenuItem_item__nYv_0') and contains(., 'Delete...')]"))))
+        delete_button = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located(((By.XPATH, "//button[starts-with(@class, 'DropdownMenuItem_item__nYv_0') and contains(., 'Delete...')]"))))
         ActionChains(self.driver).move_to_element(delete_button).click().perform()
-
-        confirm1_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".Button_buttonBase__0QP_m.Button_danger__zI3OH")))
+        confirm1_button = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".Button_buttonBase__0QP_m.Button_danger__zI3OH")))
         ActionChains(self.driver).move_to_element(confirm1_button).click().perform()
-
-        confirm2_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(((By.XPATH, "//button[@class='Button_buttonBase__0QP_m Button_primaryDanger__IlN8P']"))))
+        confirm2_button = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located(((By.XPATH, "//button[@class='Button_buttonBase__0QP_m Button_danger__zI3OH']"))))
         ActionChains(self.driver).move_to_element(confirm2_button).click().perform()
+
+  
     
     @handle_errors
     def reload(self):
